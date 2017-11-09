@@ -1,38 +1,23 @@
 import tweepy
-from tweepy import OAuthHandler
- 
-consumer_key = 'IjuTVCVVxNIlLivYDVyvNPIqB'
-consumer_secret = 'gg6hT2pV4pIMT4yvn99PaBA5YSCC2oGRsR3v9ssfuZA8WYoU1c'
-access_token = '2751957908-u1ju4PWIQTVoqdl1CS0NHm638BsUWomhwwrLD0X'
-access_secret = 'qzBiIyzo2aRReKlUbg0bVjm2pu0B4cNglz0XWhfY935na'
- 
+from tweepy import OAuthHandler, Stream
+from tweepy.streaming import StreamListener
+
+
+consumer_key = 'AuqelaIt0YLkWC4vToUV8bUMg'
+consumer_secret = 'SECNwzCczYbJlIAnxUyfd0ytDDCq2o4Fsr1ZGTMLdCskCxYwPm'
+access_token = '147892105-88JainiSiKVksISvRRBvwucpASZsfHKycnwEKWXU'
+access_secret = 'nGcAuRx6YAg405JSb6sV1SjkydONgg8H97IGAygvFvt1f'
+
 auth = OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_secret)
- 
+
 api = tweepy.API(auth)
+query = '@awkarin'
+max_tweets = 500
+searched_tweets = [status for status in tweepy.Cursor(api.search, q=query).items(max_tweets)]
+for tweet in searched_tweets:
+    print (tweet)
 
-# Read my own timeline
-for status in tweepy.Cursor(api.home_timeline).items(10):
-    # Process a single status
-    print(status.text)
-
-from tweepy import Stream
-from tweepy.streaming import StreamListener
- 
-class MyListener(StreamListener):
- 
-    def on_data(self, data):
-        try:
-            with open('python.json', 'a') as f:
-                f.write(data)
-                return True
-        except BaseException as e:
-            print("Error on_data: %s" % str(e))
-        return True
- 
-    def on_error(self, status):
-        print(status)
-        return True
- 
-twitter_stream = Stream(auth, MyListener())
-twitter_stream.filter(track=['awkarin'])
+with open('result.json', 'wb') as f:
+    for tweet in searched_tweets:
+        f.write(tweet.text.encode('utf-8'))
